@@ -109,6 +109,19 @@ def findOnYoutube(song, artist):
 			return 'Could Not Find Track'
 	else:
 		return 'Could Not Find Track'
+	
+def findOnYoutubeMusic(song, artist):
+	payload = (('key', config.YOUTUBE_API_KEY), ('part', 'snippet' ), ('q', song + ' ' + artist), ('type', 'video'), ('topicId', '/m/04rlf'), ('maxResults', '1'))
+	r = requests.get("https://www.googleapis.com/youtube/v3/search", params=payload)
+	youtubeJSON = r.json()
+	if(len(youtubeJSON['items']) > 0):
+		youtubeResult = youtubeJSON['items'][0]['snippet']['title']
+		if(isResultCorrect(song + artist, youtubeResult)):
+			return "https://music.youtube.com/watch?v=" + youtubeJSON['items'][0]['id']['videoId']
+		else:
+			return 'Could Not Find Track'
+	else:
+		return 'Could Not Find Track'
 
 
 def findOnGooglePlay(song, artist):
@@ -183,12 +196,14 @@ def writeCommentToSubreddit(subreddit):
 						spotifyLink = findOnSpotify(parsedTitle[1], parsedTitle[0])
 						iTunesLink = findOniTunes(parsedTitle[1], parsedTitle[0])
 						youtubeLink = findOnYoutube(parsedTitle[1], parsedTitle[0])
+						youtubeMusicLink = findOnYoutubeMusic(parsedTitle[1], parsedTitle[0])
 						soundcloudLink = findOnSoundCloud(parsedTitle[1], parsedTitle[0])
 						tidalLink = findOnTidal(parsedTitle[1], parsedTitle[0])
 						googlePlayLink = findOnGooglePlay(parsedTitle[1], parsedTitle[0])
 						links.append({'Spotify': spotifyLink})
 						links.append({'iTunes': iTunesLink})
 						links.append({'YouTube': youtubeLink})
+						links.append({'Youtube Music': youtubeMusicLink})
 						links.append({'Soundcloud': soundcloudLink})
 						links.append({'Tidal': tidalLink})
 						links.append({'Google Play': googlePlayLink})
